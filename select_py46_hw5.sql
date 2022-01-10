@@ -16,10 +16,13 @@ join songs s on a.album_id = s.album_id
 group by album_name;
 
 --4. 
-select singer_name from singeralbums s
-join singer s2 on s.singer_id = s2.singer_id
-join albums a on s.album_id = a.album_id
-where album_year != 2018;
+select singer_name from singer s 
+where s.singer_name not in (
+select distinct singer_name from singer s2
+left join singeralbums s3 on s2.singer_id = s3.singer_id
+left join albums a on a.album_id = s3.album_id
+where album_year = 2018)
+order by singer_name;
 
 --5. 
 select distinct(collection_name) from collection c 
@@ -53,8 +56,12 @@ group by singer_name, duration
 having duration = (select min(duration) from songs);
 
 --9. 
-select count(album_name), album_name from albums a 
+select distinct album_name from albums a 
 join songs s on a.album_id = s.album_id
-group by album_name
+where a.album_id in (
+select album_id from songs
+group by album_id
+having count(album_id) = (select count(song_id) from songs
+group by album_id
 order by count
-limit 1;
+limit 1));
