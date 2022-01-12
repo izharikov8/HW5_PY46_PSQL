@@ -57,7 +57,6 @@ having duration = (select min(duration) from songs);
 
 --9. 
 select distinct album_name from albums a 
-join songs s on a.album_id = s.album_id
 where a.album_id in (
 select album_id from songs
 group by album_id
